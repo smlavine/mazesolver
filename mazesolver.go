@@ -8,20 +8,36 @@ import (
 	"strings"
 )
 
+// A Tile represents a location in a Maze.
 type Tile rune
 
 const (
-	OPENING     = Tile('.')
+	// OPENING is a Tile in a Maze that can be traversed.
+	OPENING = Tile('.')
+
+	// OBSTRUCTION is a Tile in a Maze that cannot be passed.
 	OBSTRUCTION = Tile('#')
-	ROUTE       = Tile('+')
+
+	// ROUTE is a Tile in a Maze that is known to be part of a route to
+	// solve the Maze.
+	ROUTE = Tile('+')
 )
 
+// A Maze is a field of Tiles that can be traversed through.
 type Maze struct {
 	grid    [][]Tile
 	rows    int
 	columns int
 }
 
+// NewMaze returns a new Maze, with data read from r. The data expected is
+// text in the form of
+//
+//	0 1 0 1 0 0 1 0 0 0
+//	1 0 1 1 0 0 0 1 0 1
+//	0 1 0 0 1 0 0 0 0 0
+//	0 0 0 0 0 1 0 1 0 1
+//	0 0 1 0 0 0 1 0 0 0
 func NewMaze(r io.Reader) *Maze {
 	maze := &Maze{
 		grid:    make([][]Tile, 0),
