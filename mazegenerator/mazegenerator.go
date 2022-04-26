@@ -29,9 +29,9 @@ func main() {
 
 	// Proportional amount of ones and zeroes
 	amt := rows * cols
-	zero_amt := int(float64(amt) * density)
-	maze := append(make([]byte, zero_amt),
-		bytes.Repeat([]byte{1}, amt-zero_amt)...)
+	zeroAmt := int(float64(amt) * density)
+	maze := append(make([]byte, zeroAmt),
+		bytes.Repeat([]byte{1}, amt-zeroAmt)...)
 
 	rand.Shuffle(len(maze), func(i, j int) {
 		maze[i], maze[j] = maze[j], maze[i]
