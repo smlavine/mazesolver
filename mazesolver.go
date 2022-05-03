@@ -83,7 +83,6 @@ func (maze *Maze) String() string {
 	builder.WriteString(boxTopBottom)
 
 	return builder.String()
-
 }
 
 func main() {
