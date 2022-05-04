@@ -9,7 +9,7 @@ import (
 )
 
 // A Tile represents a location in a Maze.
-type Tile rune
+type Tile = rune
 
 const (
 	// OPENING is a Tile in a Maze that can be traversed.
@@ -74,11 +74,32 @@ func (maze *Maze) String() string {
 	var builder strings.Builder
 
 	// Bar to be placed at the top and bottom of the box around the maze.
-	boxTopBottom := "|" + strings.Repeat("-", maze.columns) + "|\n"
+	boxTopBottom := "|" + strings.Repeat("-", 2*maze.columns+1) + "|\n"
 
 	builder.WriteString(boxTopBottom)
 
-	// TODO: render maze.
+	for i, row := range maze.grid {
+		if i == 0 {
+			builder.WriteRune(' ')
+		} else {
+			builder.WriteRune('|')
+		}
+
+		for _, tile := range row {
+			builder.WriteRune(' ')
+			builder.WriteRune(tile)
+		}
+
+		builder.WriteRune(' ')
+
+		if i == len(maze.grid)-1 {
+			builder.WriteRune(' ')
+		} else {
+			builder.WriteRune('|')
+		}
+
+		builder.WriteRune('\n')
+	}
 
 	builder.WriteString(boxTopBottom)
 
