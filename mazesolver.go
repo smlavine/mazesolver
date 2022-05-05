@@ -130,9 +130,14 @@ func main() {
 
 	flag.Parse()
 
+	var (
+		in  io.Reader
+		out io.Writer
+	)
 	if infile == "" {
 		in = os.Stdin
 	} else {
+		var err error
 		in, err = os.Open(infile)
 		if err != nil {
 			log.Fatalf("failed to open '%s': %v\n", infile, err)
@@ -143,6 +148,7 @@ func main() {
 	if outfile == "" {
 		out = os.Stdout
 	} else {
+		var err error
 		out, err = os.Create(outfile)
 		if err != nil {
 			log.Fatalf("failed to open '%s': %v\n", outfile, err)
