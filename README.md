@@ -1,2 +1,3 @@
-This is a small project to rewrite Project 2 (Escape from GNU York) for
-RIT CSCI-243 in Go.
+This is a rewrite in Go of a project from CSCI-243 at RIT, to implement
+a breadth-first-search algorithm to solve a maze. The project was
+initially in C.
