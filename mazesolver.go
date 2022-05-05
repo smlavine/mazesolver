@@ -12,9 +12,9 @@ import (
 
 // A Tile represents a location in a Maze.
 type Tile struct {
-	char   rune
-	row    int
-	column int
+	char rune
+	row  int
+	col  int
 }
 
 const (
@@ -31,9 +31,9 @@ const (
 
 // A Maze is a field of Tiles that can be traversed through.
 type Maze struct {
-	grid    [][]Tile
-	rows    int
-	columns int
+	grid [][]Tile
+	rows int
+	cols int
 }
 
 // NewMaze returns a new Maze, with data read from r. The data expected is
@@ -46,9 +46,9 @@ type Maze struct {
 //	0 0 1 0 0 0 1 0 0 0
 func NewMaze(r io.Reader) *Maze {
 	maze := &Maze{
-		grid:    make([][]Tile, 0),
-		rows:    0,
-		columns: 0,
+		grid: make([][]Tile, 0),
+		rows: 0,
+		cols: 0,
 	}
 
 	scanner := bufio.NewScanner(r)
@@ -65,9 +65,9 @@ func NewMaze(r io.Reader) *Maze {
 				continue // Only append to row if 0 or 1 found
 			}
 			row = append(row, Tile{
-				char:   t,
-				row:    maze.rows,
-				column: col,
+				char: t,
+				row:  maze.rows,
+				col:  col,
 			})
 		}
 		maze.grid = append(maze.grid, row)
@@ -76,9 +76,9 @@ func NewMaze(r io.Reader) *Maze {
 
 	// We can assume that all rows are of the same length. This gets the
 	// actual length of the row, but will still work if there are none --
-	// maze.columns will remain 0.
+	// maze.cols will remain 0.
 	for _, row := range maze.grid {
-		maze.columns = len(row)
+		maze.cols = len(row)
 		break
 	}
 
@@ -89,7 +89,7 @@ func (maze *Maze) String() string {
 	var builder strings.Builder
 
 	// Bar to be placed at the top and bottom of the box around the maze.
-	boxTopBottom := "|" + strings.Repeat("-", 2*maze.columns+1) + "|\n"
+	boxTopBottom := "|" + strings.Repeat("-", 2*maze.cols+1) + "|\n"
 
 	builder.WriteString(boxTopBottom)
 
