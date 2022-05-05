@@ -2,8 +2,10 @@ package main
 
 import (
 	"bufio"
+	"flag"
 	"fmt"
 	"io"
+	"log"
 	"os"
 	"strings"
 )
@@ -107,6 +109,57 @@ func (maze *Maze) String() string {
 }
 
 func main() {
-	maze := NewMaze(os.Stdin)
-	fmt.Print(maze.String())
+	var (
+		printStart          bool
+		printSolutionLength bool
+		printSolution       bool
+		infile, outfile     string
+	)
+
+	flag.BoolVar(&printStart, "d", false,
+		"Pretty-print (display) the maze after reading.")
+	flag.BoolVar(&printSolutionLength, "s", false,
+		"Print length of shortest path or 'No solution'.")
+	flag.BoolVar(&printSolution, "p", false,
+		"Pretty-print maze with the path, if one exists.")
+
+	flag.StringVar(&infile, "i", "",
+		"Read maze from infile. (default: stdin)")
+	flag.StringVar(&outfile, "o", "",
+		"Write all output to outfile. (default: stdout)")
+
+	flag.Parse()
+
+	if infile == "" {
+		in = os.Stdin
+	} else {
+		in, err = os.Open(infile)
+		if err != nil {
+			log.Fatalf("failed to open '%s': %v\n", infile, err)
+		}
+		f := in.(*os.File)
+		defer f.Close()
+	}
+	if outfile == "" {
+		out = os.Stdout
+	} else {
+		out, err = os.Create(outfile)
+		if err != nil {
+			log.Fatalf("failed to open '%s': %v\n", outfile, err)
+		}
+		f := in.(*os.File)
+		defer func() {
+			if err := f.Close(); err != nil {
+				log.Fatalf("failed to close outfile '%s': %v\n",
+					err)
+			}
+		}()
+	}
+
+	maze := NewMaze(in)
+
+	if printStart {
+		fmt.Fprint(out, maze.String())
+	}
+	// TODO: handle the rest of the options
 }
