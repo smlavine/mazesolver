@@ -54,7 +54,8 @@ func NewMaze(r io.Reader) *Maze {
 	scanner := bufio.NewScanner(r)
 	for scanner.Scan() {
 		row := make([]Tile, 0)
-		for col, char := range scanner.Text() {
+		col := 0
+		for _, char := range scanner.Text() {
 			var t rune
 			switch char {
 			case '0':
@@ -69,6 +70,7 @@ func NewMaze(r io.Reader) *Maze {
 				row:  maze.rows,
 				col:  col,
 			})
+			col++
 		}
 		maze.grid = append(maze.grid, row)
 		maze.rows++
