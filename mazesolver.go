@@ -87,6 +87,85 @@ func NewMaze(r io.Reader) *Maze {
 	return maze
 }
 
+// Solve solves the Maze using a Breadth-First-Search algorithm. The amount of
+// steps it took to solve the maze is returned, or zero if the maze could not
+// be solved.
+func (maze *Maze) Solve() (steps uint) {
+	start := &maze.grid[0][0]
+	if start.char != OPENING {
+		// Let's not waste our time.
+		// We also can rely on this assumption that the start of the
+		// maze is valid at the end of this method, when we are
+		// assigning the ROUTE tiles.
+		return
+	}
+
+	end := &maze.grid[maze.rows-1][maze.cols-1]
+
+	visited := make(map[*Tile]bool)
+
+	predecessors := make(map[*Tile]*Tile)
+
+	var queue []*Tile
+	queue = append(queue, start)
+
+	for len(queue) > 0 {
+		t := queue[0]
+		queue = queue[1:]
+
+		if t == end {
+			break // At maze exit
+		}
+
+		nbrs := make([]*Tile, 0, 4)
+
+		// We must check the bounds of t.row and t.col to make sure
+		// we aren't trying to access a neighbor that doesn't exist.
+		if t.row > 0 {
+			nbrs = append(nbrs, &maze.grid[t.row-1][t.col])
+		}
+		if t.row < maze.rows-1 {
+			nbrs = append(nbrs, &maze.grid[t.row+1][t.col])
+		}
+		if t.col > 0 {
+			nbrs = append(nbrs, &maze.grid[t.row][t.col-1])
+		}
+		if t.col < maze.cols-1 {
+			nbrs = append(nbrs, &maze.grid[t.row][t.col+1])
+		}
+
+		for _, neighbor := range nbrs {
+			// If neighbor is not traversable, skip
+			if neighbor.char == OBSTRUCTION {
+				continue
+			}
+
+			// Dont visit the neighbor if we already did.
+			if visited[neighbor] {
+				continue
+			}
+
+			visited[neighbor] = true
+			predecessors[neighbor] = t
+			queue = append(queue, neighbor)
+		}
+	}
+
+	// If we didn't visit the end of the maze, then there was no solution.
+	if !visited[end] {
+		return
+	}
+
+	for t := end; t != start; t = predecessors[t] {
+		t.char = ROUTE
+		steps++
+	}
+	start.char = ROUTE
+	steps++
+
+	return
+}
+
 func (maze *Maze) String() string {
 	var builder strings.Builder
 
@@ -182,5 +261,16 @@ func main() {
 	if printStart {
 		fmt.Fprint(out, maze.String())
 	}
-	// TODO: handle the rest of the options
+
+	if steps := maze.Solve(); printSolutionLength {
+		if steps == 0 {
+			fmt.Fprintln(out, "No solution.")
+		} else {
+			fmt.Fprintf(out, "Solution in %v steps.\n", steps)
+		}
+	}
+
+	if printSolution {
+		fmt.Fprint(out, maze.String())
+	}
 }
