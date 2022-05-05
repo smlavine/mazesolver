@@ -11,18 +11,22 @@ import (
 )
 
 // A Tile represents a location in a Maze.
-type Tile = rune
+type Tile struct {
+	char   rune
+	row    int
+	column int
+}
 
 const (
-	// OPENING is a Tile in a Maze that can be traversed.
-	OPENING = Tile('.')
+	// OPENING is a rune to represent a Tile that can be traversed.
+	OPENING = '.'
 
-	// OBSTRUCTION is a Tile in a Maze that cannot be passed.
-	OBSTRUCTION = Tile('#')
+	// OBSTRUCTION is a rune to represent a Tile that cannot be traversed.
+	OBSTRUCTION = '#'
 
-	// ROUTE is a Tile in a Maze that is known to be part of a route to
-	// solve the Maze.
-	ROUTE = Tile('+')
+	// ROUTE is a rune to represent a Tile that is known to be part of a
+	// route to solve the Maze.
+	ROUTE = '+'
 )
 
 // A Maze is a field of Tiles that can be traversed through.
@@ -50,12 +54,21 @@ func NewMaze(r io.Reader) *Maze {
 	scanner := bufio.NewScanner(r)
 	for scanner.Scan() {
 		row := make([]Tile, 0)
-		for _, r := range scanner.Text() {
-			if r == '0' {
-				row = append(row, OPENING)
-			} else if r == '1' {
-				row = append(row, OBSTRUCTION)
+		for col, char := range scanner.Text() {
+			var t rune
+			switch char {
+			case '0':
+				t = OPENING
+			case '1':
+				t = OBSTRUCTION
+			default:
+				continue // Only append to row if 0 or 1 found
 			}
+			row = append(row, Tile{
+				char:   t,
+				row:    maze.rows,
+				column: col,
+			})
 		}
 		maze.grid = append(maze.grid, row)
 		maze.rows++
@@ -89,7 +102,7 @@ func (maze *Maze) String() string {
 
 		for _, tile := range row {
 			builder.WriteRune(' ')
-			builder.WriteRune(tile)
+			builder.WriteRune(tile.char)
 		}
 
 		builder.WriteRune(' ')
