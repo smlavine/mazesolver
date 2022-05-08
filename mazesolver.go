@@ -140,7 +140,7 @@ func (maze *Maze) Solve() (steps uint) {
 				continue
 			}
 
-			// Dont visit the neighbor if we already did.
+			// Don't visit the neighbor if we already did.
 			if visited[neighbor] {
 				continue
 			}
