@@ -156,12 +156,12 @@ func (maze *Maze) Solve() (steps uint) {
 		return
 	}
 
+	start.char = ROUTE
+	steps = 1
 	for t := end; t != start; t = predecessors[t] {
 		t.char = ROUTE
 		steps++
 	}
-	start.char = ROUTE
-	steps++
 
 	return
 }
